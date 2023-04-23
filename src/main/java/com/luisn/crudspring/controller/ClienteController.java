@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -60,4 +61,20 @@ public class ClienteController {
             })
             .orElse(ResponseEntity.notFound().build());
     }
+
+    // Hard Delete
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable long id){
+        return clienteRepository.findById(id)
+        .map( registrobusca -> {
+            clienteRepository.deleteById(id);
+            return ResponseEntity.noContent().<Void>build();
+        })
+        .orElse(ResponseEntity.notFound().build());
+    }
+
+    /*
+     * Caso nao queria remover no estilo hard delete (remocao fisica), o deletemapping ira alterar um campo
+     * de status do cliente para inativo, por exemplo. Assim ele permanecerá na base de dados.
+     */
 }
